@@ -34,3 +34,4 @@ def test_nao_agenda_no_passado():
     with pytest.raises(ValueError):                     
         caso.executar("a1", "c1", "b1", servico, datetime(2026, 10, 20, 9, 0))  
 
+

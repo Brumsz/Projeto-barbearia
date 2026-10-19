@@ -30,5 +30,29 @@ class Agendamento():
             raise ValueError('Não é possível cancelar um agendamento já pago')
         self.status = StatusAgendamento.CANCELADO
 
+    def registrar_pagamento(self,pagamento:Pagamento)-> None:
+        if self.status  == StatusAgendamento.CANCELADO:
+            raise ValueError('Agendamento cancelado não pode ser pago!')
+        if self.pagamento is not None:
+            raise ValueError('Não é possivel registrar um pagamento ja registrado!')
+        if pagamento.valor != self.servico.preco:
+            raise ValueError('Valor do pagamento tem que ser o mesmo valor do serviço!')
+        
+        self.pagamento = pagamento
 
-    
+    def confirmar_pagamento(self) ->None:
+        if self.pagamento is None:
+            raise ValueError('Não é possivel confirmar pagamento sem registro!')
+        if self.status  == StatusAgendamento.CANCELADO:
+            raise ValueError('Agendamento cancelado não pode ser pago!')
+        if self.pagamento.status == StatusPagamento.PAGO:
+            raise ValueError('Pagamento já foi confirmado!')
+        
+     
+        self.pagamento.confirmar_pagamento()
+
+
+        
+
+        
+        

@@ -10,6 +10,7 @@ class MetodoPagamento(Enum):
 class StatusPagamento(Enum):
     PENDENTE = "pendente"
     PAGO = "pago"
+    CANCELADO = "cancelado"
 
 @dataclass
 class Pagamento:

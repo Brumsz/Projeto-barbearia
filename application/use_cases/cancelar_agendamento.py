@@ -13,6 +13,10 @@ class CancelarAgendamento:
         if agendamento_encontrado is None:
             raise  ValueError('Agendamento não encontrado')
 
+        #VOU DEIXAR ESSA FUNÇÃO TEMPORARIAMENTE, MUDAR DEPOIS
+        if agendamento_encontrado.pagamento == StatusPagamento.PAGO:
+            raise  ValueError('O corte ja foi pago e não pode ser cancelado!')
+
         agendamento_encontrado.cancelar()
 
         self.repositorio.atualizar(agendamento_encontrado)
