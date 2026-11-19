@@ -3,7 +3,8 @@ from decimal import Decimal
 from datetime import datetime
 
 
-from adapters.saida.repositorio_memoria import RepositorioAgendamentoEmMemoria
+from adapters.saida.memoria.repositorio_memoria import RepositorioAgendamentoEmMemoria
+from adapters.saida.memoria.repositorio_servicos_memoria import  RepositorioServicosEmMemoria
 from application.use_cases.agendar_horario import AgendarHorario
 from domain.agendamento import Agendamento
 from domain.servico import Servico,TipoDeServico
@@ -71,11 +72,11 @@ def test_registrar_pagamento_valor_diferente_do_servico():
 def test_registrar_pagamento_em_agendamento_criado():
 
     repositorio = RepositorioAgendamentoEmMemoria()
-    caso = AgendarHorario(repositorio, RelogioFixo(datetime(2026, 10, 1, 8, 0)))
+    servicos = RepositorioServicosEmMemoria([Servico(TipoDeServico.BARBA, Decimal("20.00"))])
+    caso = AgendarHorario(repositorio, RelogioFixo(datetime(2026, 10, 1, 8, 0)),servicos)
 
-    servico = Servico(TipoDeServico.CABELO, Decimal("30.00"))
-    pagamento = Pagamento(Decimal('30.00'),datetime(2026, 10, 20, 9, 0),MetodoPagamento.DINHEIRO)
-    agendamento = caso.executar("01b", "02A", "12w", servico, datetime(2026, 10, 20, 9, 0))
+    pagamento = Pagamento(Decimal('20.00'),datetime(2026, 10, 20, 9, 0),MetodoPagamento.DINHEIRO)
+    agendamento = caso.executar("01b", "02A", "12w", TipoDeServico.BARBA, datetime(2026, 10, 20, 9, 0))
 
     registro = RegistrarPagamento(repositorio).executar("01b",pagamento)
 
@@ -85,7 +86,7 @@ def test_registrar_pagamento_em_agendamento_criado():
 def test_registrar_pagamento_em_agendamento_inexistente():
 
     repositorio = RepositorioAgendamentoEmMemoria()
-    pagamento = Pagamento(Decimal('30.00'),datetime(2026, 10, 20, 9, 0),MetodoPagamento.DINHEIRO)
+    pagamento = Pagamento(Decimal('20.00'),datetime(2026, 10, 20, 9, 0),MetodoPagamento.DINHEIRO)
 
     with pytest.raises(ValueError, match='não encontrado' ):
         RegistrarPagamento(repositorio).executar("01b",pagamento)         

@@ -83,9 +83,7 @@ class CLI:
         tipo = tipos.get(escolha)
         if tipo is None:
             raise ValueError("Serviço inválido")
-
-        preco = Decimal(input("Preço do serviço: ").strip())
-        return Servico(tipo, preco)
+        return tipo
 
 
 
@@ -103,4 +101,6 @@ class CLI:
         if metodo is None:
             raise ValueError('Método invalido')
 
-        return Pagamento(valor, data_pagamento, metodo_de_pagamento)
+        return Pagamento(valor, data_pagamento, metodo)
+
+    

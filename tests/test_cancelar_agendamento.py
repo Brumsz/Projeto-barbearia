@@ -2,7 +2,8 @@ import pytest
 from datetime import datetime
 from decimal import Decimal
 
-from adapters.saida.repositorio_memoria import RepositorioAgendamentoEmMemoria
+from adapters.saida.memoria.repositorio_memoria import RepositorioAgendamentoEmMemoria
+from adapters.saida.memoria.repositorio_servicos_memoria import  RepositorioServicosEmMemoria
 from application.use_cases.agendar_horario import AgendarHorario
 from domain.servico import Servico,TipoDeServico
 from application.use_cases.cancelar_agendamento import CancelarAgendamento
@@ -18,9 +19,10 @@ class RelogioFixo:
 
 def test_cancelar_agendamento():
     repositorio = RepositorioAgendamentoEmMemoria()
-    caso_agendar = AgendarHorario(repositorio, RelogioFixo(datetime(2026, 10, 1, 8, 0)))
+    servicos = RepositorioServicosEmMemoria([Servico(TipoDeServico.BARBA, Decimal("20.00"))])
+    caso_agendar = AgendarHorario(repositorio, RelogioFixo(datetime(2026, 10, 1, 8, 0)),servicos)
 
-    agendar = caso_agendar.executar('01b','90a','2ea',TipoDeServico.CABELO,datetime(2026, 10, 20, 9, 0))
+    agendar = caso_agendar.executar('01b','90a','2ea',TipoDeServico.BARBA,datetime(2026, 10, 20, 9, 0))
 
     caso_cancelar = CancelarAgendamento(repositorio)
     caso_cancelar.executar("01b")
@@ -36,9 +38,10 @@ def test_cancelar_agendamento_nao_encontrado():
 
 def test_cancelar_agendamento_pago():
     repositorio = RepositorioAgendamentoEmMemoria()
-    caso_agendar = AgendarHorario(repositorio, RelogioFixo(datetime(2026, 10, 1, 8, 0)))
+    servicos = RepositorioServicosEmMemoria([Servico(TipoDeServico.BARBA, Decimal("20.00"))])
+    caso_agendar = AgendarHorario(repositorio, RelogioFixo(datetime(2026, 10, 1, 8, 0)),servicos)
     
-    agendar = caso_agendar.executar('02b','97a','9ea',TipoDeServico.CABELO,datetime(2026, 10, 20, 9, 0))
+    agendar = caso_agendar.executar('02b','97a','9ea',TipoDeServico.BARBA,datetime(2026, 10, 20, 9, 0))
 
     agendamento = repositorio.buscar('02b')
     agendamento.pagamento = Pagamento(Decimal("30.00"), datetime(2026, 10, 20, 9, 0), MetodoPagamento.PIX)
@@ -52,9 +55,10 @@ def test_cancelar_agendamento_pago():
 
 def test_horario_cancelado_esta_disponivel():
     repositorio = RepositorioAgendamentoEmMemoria()
-    caso_agendar = AgendarHorario(repositorio, RelogioFixo(datetime(2026, 10, 1, 8, 0)))
+    servicos = RepositorioServicosEmMemoria([Servico(TipoDeServico.BARBA, Decimal("20.00"))])
+    caso_agendar = AgendarHorario(repositorio, RelogioFixo(datetime(2026, 10, 1, 8, 0)),servicos)
 
-    agendar = caso_agendar.executar('01b','90a','2ea',TipoDeServico.CABELO,datetime(2026, 10, 20, 9, 0))
+    agendar = caso_agendar.executar('01b','90a','2ea',TipoDeServico.BARBA,datetime(2026, 10, 20, 9, 0))
 
     caso_cancelar = CancelarAgendamento(repositorio)
     caso_cancelar.executar("01b")
