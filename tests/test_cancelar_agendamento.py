@@ -9,6 +9,7 @@ from domain.servico import Servico,TipoDeServico
 from application.use_cases.cancelar_agendamento import CancelarAgendamento
 from domain.pagamento import Pagamento,StatusPagamento,MetodoPagamento
 from domain.agendamento import Agendamento,StatusAgendamento
+from domain.horario import Horario
 
 class RelogioFixo:
     def __init__(self, momento: datetime):
@@ -63,4 +64,4 @@ def test_horario_cancelado_esta_disponivel():
     caso_cancelar = CancelarAgendamento(repositorio)
     caso_cancelar.executar("01b")
 
-    assert not repositorio.horario_ocupado('2ea',datetime(2026, 10, 20, 9, 0))
+    assert not repositorio.horario_ocupado('2ea',Horario(datetime(2026, 10, 20, 9, 0)))

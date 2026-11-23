@@ -5,10 +5,10 @@ class RepositorioAgendamentoEmMemoria:
     def __init__(self):
         self.agendamentos: list[Agendamento] = []
 
-    def horario_ocupado(self, barbeiro_id, inicio) -> bool:
+    def horario_ocupado(self, barbeiro_id, horario) -> bool:
         return any(
             a.barbeiro_id == barbeiro_id
-            and a.horario.inicio == inicio
+            and a.horario == horario
             and a.status == StatusAgendamento.ATIVO
             for a in self.agendamentos
         )

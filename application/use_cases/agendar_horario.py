@@ -5,6 +5,7 @@ from domain.agendamento import Agendamento,StatusAgendamento
 from domain.horario import Horario
 from domain.servico import Servico, TipoDeServico
 from application.portas import Relogio,RepositorioServicos
+from application.errors.erros import HorarioIndisponivel, NaoEncontrado
 
 
 class AgendarHorario:
@@ -17,7 +18,7 @@ class AgendarHorario:
 
         servico = self.repositorio_servicos.obter_por_tipo(tipo)
         if servico is None:
-            raise ValueError("Serviço não cadastrado")
+            raise NaoEncontrado("Serviço não cadastrado")
 
         horario= Horario(inicio)
 
@@ -25,7 +26,7 @@ class AgendarHorario:
             raise ValueError("Não é possível agendar no passado")
 
         if self.repositorio.horario_ocupado(barbeiro_id, horario ):
-            raise ValueError('Hórario Indisponível!')
+            raise HorarioIndisponivel('Horário Indisponivel!')
 
         agendamento = Agendamento(id, cliente_id, barbeiro_id, servico, horario)
         

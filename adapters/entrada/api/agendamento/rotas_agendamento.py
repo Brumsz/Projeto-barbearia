@@ -1,11 +1,28 @@
-from fastapi import APIRouter,HTTPException
+from fastapi import APIRouter, HTTPException
 
-from application.portas import RepositorioAgendamentos,RepositorioServicos
-from adapters.entrada.api.schemas import AgendamentoEntrada,AgendamentoSaida
-from composicao import montar_caso_de_uso
+from adapters.entrada.api.schemas import AgendamentoEntrada, AgendamentoSaida
+from domain.servico import TipoDeServico
+from application.errors.erros import HorarioIndisponivel, NaoEncontrado
 
-router = APIRouter(prefix='/agendamentos')
+def criar_router(casos: dict) -> APIRouter:
+    router = APIRouter(prefix="/agendamentos")
 
-@router.post('/criar', response_model=AgendamentoEntrada,status_code=201)
-def criar_agendamento(repositorio:RepositorioAgendamentos , servicos:RepositorioServicos, dados:AgendamentoEntrada) -> AgendamentoSaida:
-    
+    @router.post("", status_code=201, response_model=AgendamentoSaida)
+    def criar_agendamento(dados: AgendamentoEntrada):
+
+        try:
+            tipo = TipoDeServico(dados.tipo)
+            agendamento = casos['agendar'].executar(dados.id, dados.cliente_id, dados.barbeiro_id, tipo, dados.inicio)
+        except NaoEncontrado as e :
+            raise HTTPException(status_code=404,detail=f'{e}')
+        except HorarioIndisponivel as e :
+            raise HTTPException(status_code=409,detail=f'{e}')
+        except ValueError as e:
+            raise HTTPException(status_code=400,detail=f'{e}')
+
+        return AgendamentoSaida(id=agendamento.id, cliente_id= agendamento.cliente_id, barbeiro_id= agendamento.barbeiro_id, tipo=agendamento.servico.servico.value, preco=agendamento.servico.preco, horario= agendamento.horario.inicio, status=agendamento.status.value)
+        
+
+
+
+    return router
